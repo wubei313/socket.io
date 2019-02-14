@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocket</title>
+    <script src="socket.io-client.js"></script>
+</head>
+<body>
+<h1>Chat Room</h1>
+<input id="sendTxt" type="text" />
+<button id="sendBtn">send</button>
+<script>
+    //一些函数
+    let log = console.log.bind(console)
+
+    function showMessage(str, type) {
+        let div = document.createElement('div')
+        div.innerHTML = str
+        if(type == 'enter') {
+            div.style.color = 'blue'
+        } else if(type == 'leave') {
+            div.style.color = 'red'
+        }
+        document.body.appendChild(div)
+    }
+
+    //socket链接
+    let socket = io('http://localhost:3000')
+    socket.on('message', function (data) {
+        showMessage(data, 'message')
+    })
+    socket.on('leave', function (data) {
+        showMessage(data, 'leave')
+    })
+    socket.on('enter', function (data) {
+        showMessage(data, 'enter')
+    })
+
+    document.getElementById('sendBtn').onclick = function() {
+        let txt = document.getElementById('sendTxt').value
+        if (txt) {
+            socket.emit('message', txt)
+        }
+    }
+
+</script>
+</body>
+</html>
